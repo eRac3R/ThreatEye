@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %}Alerts Visualization{% endblock %}
+
+{% block content %}
+<h2>Recent Alerts</h2>
+<canvas id="alertsChart" width="600" height="200"></canvas>
+<ul id="alertsList"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+async function fetchAlerts() {
+    const response = await fetch('/api/alerts');
+    const data = await response.json();
+
+    const alertsList = document.getElementById('alertsList');
+    alertsList.innerHTML = '';
+    data.forEach(alert => {
+        const li = document.createElement('li');
+        li.textContent = `[${alert.timestamp}] ${alert.alert_name}: ${alert.message}`;
+        alertsList.appendChild(li);
+    });
+
+    const counts = {};
+    data.forEach(alert => {
+        let hour = alert.timestamp.slice(0, 13);
+        counts[hour] = (counts[hour] || 0) + 1;
+    });
+
+    const labels = Object.keys(counts).sort();
+    const countsArr = labels.map(l => counts[l]);
+
+    const ctx = document.getElementById('alertsChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Alerts Per Hour',
+                data: countsArr,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: {
+            scales: {
+                x: { title: { display: true, text: 'Hour (UTC)' } },
+                y: { beginAtZero: true, title: { display: true, text: 'Number of Alerts' } }
+            }
+        }
+    });
+}
+
+fetchAlerts();
+</script>
+
+{% endblock %}

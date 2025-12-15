@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="dashboard-section">
+    <h2>MISP Threat Intelligence</h2>
+    <ul class="alert-list">
+        {% for alert in alerts.response %}
+            <li class="alert-item">
+                <strong>{{ alert.Event.info }}</strong> - {{ alert.Attribute[0].value }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

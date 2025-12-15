@@ -1,0 +1,7 @@
+flask
+elasticsearch
+requests
+python-dotenv
+flask_cors
+thehive4py
+flask_monitoringdashboard

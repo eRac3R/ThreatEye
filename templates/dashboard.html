@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Welcome to your Cybersecurity Dashboard</h2>
+<div class="card-container">
+    <div class="card">
+        <h3>Auditbeat Documents</h3>
+        <p>{{ stats.auditbeat_docs }}</p>
+    </div>
+    <div class="card">
+        <h3>Filebeat Documents</h3>
+        <p>{{ stats.filebeat_docs }}</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Threats Detected</h2>
+<table>
+    <thead>
+        <tr><th>Website</th><th>Flag Level</th><th>Source</th><th>Date Detected</th></tr>
+    </thead>
+    <tbody>
+        {% for threat in threats %}
+        <tr>
+            <td>{{ threat.site }}</td>
+            <td>{{ threat.flag }}</td>
+            <td>{{ threat.source }}</td>
+            <td>{{ threat.detected_on }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

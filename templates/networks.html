@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Networks Blocked Attempts</h2>
+<table>
+    <thead>
+        <tr><th>Network</th><th>Blocked Attempts</th><th>Last Blocked Timestamp</th></tr>
+    </thead>
+    <tbody>
+        {% for net in networks %}
+        <tr>
+            <td>{{ net.network }}</td>
+            <td>{{ net.blocked_attempts }}</td>
+            <td>{{ net.last_blocked }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

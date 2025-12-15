@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Simulation Exercises</h2>
+<table>
+    <thead>
+        <tr><th>Simulation</th><th>Status</th><th>Date</th><th>Alerts Triggered</th></tr>
+    </thead>
+    <tbody>
+        {% for sim in simulations %}
+        <tr>
+            <td>{{ sim.simulation }}</td>
+            <td>{{ sim.status }}</td>
+            <td>{{ sim.date }}</td>
+            <td>{{ sim.alerts_triggered }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
