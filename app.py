@@ -7,23 +7,21 @@ from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 import requests
 import re
+from datetime import datetime
 
 
 
 app = Flask(__name__)
-es = Elasticsearch("http://192.168.1.7:9200")  # Update to your ES URL
+es = Elasticsearch("enter ip from vm1:9200")  # Update to your ES URL
 
 THEHIVE_URL = "http://localhost:9000"  # Update this to your actual TheHive URL if different
-#THEHIVE_API_KEY = "wPioRkl91ROl7ud5ELLcaPkczNyFFehd"  # Replace with your TheHive API key
-THEHIVE_API_KEY = "i7DdxDQ4ZXmG4P1MFkNQwq02lPhvCOQt"
+THEHIVE_API_KEY = "enter hive api key"
 thehive_api = TheHiveApi(THEHIVE_URL, THEHIVE_API_KEY)
 
 
-#new1
 MISP_URL = "https://localhost"
-MISP_API_KEY = "qIJIs8oyusAdUh7VTQVr3cHpUGV7Ua6pQEkx36Rr"
+MISP_API_KEY = "add misp api"
 MISP_VERIFY_SSL = False
-#new1
 
 severity_map = {
     "whoami": 2,
@@ -170,7 +168,8 @@ def sync_alerts_to_thehive_logic():
                     {"match_phrase": {"process.args": "id"}},
                     {"match_phrase": {"process.args": "hostname"}},
                     {"match_phrase": {"process.args": "uname"}},
-                    {"match_phrase": {"process.args": "ps"}}
+                    {"match_phrase": {"process.args": "ps"}},
+                    {"match_phrase": {"process.args": "curl"}}
                 ],
                 "minimum_should_match": 1,
                 "filter": [
@@ -228,11 +227,23 @@ def misp_alerts():
     url = f"{MISP_URL}/events/restSearch"
     headers = {
         "Authorization": MISP_API_KEY,
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "Content-Type": "application/json"
     }
-    response = requests.post(url, headers=headers, verify=False)
+    data = {"returnFormat": "json"}  # Add this line
+    response = requests.post(url, headers=headers, json=data, verify=False)
     alerts = response.json()
+    print("MISP API response:", alerts)
     return render_template('misp_alerts.html', alerts=alerts)
+
+@app.template_filter('datetimeformat')
+def datetimeformat(value):
+    # Convert string to integer if necessary
+    if isinstance(value, str):
+        value = int(value)
+    # The timestamp appears to be in milliseconds
+    dt = datetime.utcfromtimestamp(value / 1000)
+    return dt.strftime('%Y-%m-%d %H:%M:%S')
 
 
 
@@ -287,18 +298,19 @@ def parse_indicator(value):
 
 def add_misp_indicator(value):
     type, category = parse_indicator(value)
-    url = f"{MISP_URL}/attributes/add"
+    url = f"{MISP_URL}/attributes/add/2"
     headers = {
         "Authorization": MISP_API_KEY,
         "Accept": "application/json"
     }
     data = {
-        "event_id": 1,  # Use an existing event ID or create a new one
+        "event_id": 2,  # Use an existing event ID or create a new one
         "category": category,
         "type": type,
         "value": value
     }
     response = requests.post(url, headers=headers, json=data, verify=False)
+    print("MISP add indicator response:", response.json()) 
     return response.json()
 
 
@@ -306,7 +318,7 @@ def add_misp_indicator(value):
 
 if __name__ == "__main__":
     scheduler = BackgroundScheduler()
-    scheduler.add_job(sync_job, 'interval', seconds=30)
-    scheduler.add_job(sync_misp_job, 'interval', seconds=30)
+    scheduler.add_job(sync_job, 'interval', seconds=15)
+    scheduler.add_job(sync_misp_job, 'interval', seconds=15)
     scheduler.start()
     app.run(host="0.0.0.0", port=5000, debug=True)

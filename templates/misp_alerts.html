@@ -3,12 +3,33 @@
 {% block content %}
 <div class="dashboard-section">
     <h2>MISP Threat Intelligence</h2>
-    <ul class="alert-list">
-        {% for alert in alerts.response %}
-            <li class="alert-item">
-                <strong>{{ alert.Event.info }}</strong> - {{ alert.Attribute[0].value }}
-            </li>
-        {% endfor %}
-    </ul>
+    {% if alerts.response %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Event Info</th>
+                    <th>Attribute Type</th>
+                    <th>Value</th>
+                    <th>Comment</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alert in alerts.response %}
+                    {% for attr in alert.Event.Attribute %}
+                        <tr>
+                            <td>{{ alert.Event.info }}</td>
+                            <td>{{ attr.type }}</td>
+                            <td>{{ attr.value }}</td>
+                            <td>{{ attr.comment }}</td>
+                            <td>{{ attr.timestamp|datetimeformat }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No alerts found in MISP.</p>
+    {% endif %}
 </div>
 {% endblock %}

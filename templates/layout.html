@@ -13,13 +13,12 @@
         <nav>
             <ul>
                 <li><a href="{{ url_for('dashboard') }}">Overview</a></li>
+                <li><a href="{{ url_for('thehive_cases') }}">The Hive</a></li>
+                <li><a href="{{ url_for('misp_alerts') }}">MISP</a></li>
+		        <li><a href="{{ url_for('alerts_viz') }}">Alerts Visualization</a></li>
                 <li><a href="{{ url_for('networks') }}">Networks Blocked</a></li>
                 <li><a href="{{ url_for('threats') }}">Threats Detected</a></li>
                 <li><a href="{{ url_for('anomalies') }}">Alerts & Actions</a></li>
-		        <li><a href="{{ url_for('alerts_viz') }}">Alerts Visualization</a></li>
-                <li><a href="{{ url_for('thehive_cases') }}">The Hive</a></li>
-                <li><a href="{{ url_for('misp_alerts') }}">MISP</a></li>
-
             </ul>
         </nav>
     </header>
